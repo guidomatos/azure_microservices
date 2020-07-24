@@ -2,6 +2,7 @@
 using ECommerce.Api.Products.Db;
 using ECommerce.Api.Products.Interfaces;
 using ECommerce.Api.Products.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace ECommerce.Api.Products.Providers
             this.dbContext = dbContext;
             this.logger = logger;
             this.mapper = mapper;
+
+            SeddData();
         }
 
         private void SeddData() {
@@ -31,9 +34,20 @@ namespace ECommerce.Api.Products.Providers
             }
         }
 
-        Task<(bool IsSuccess, IEnumerable<Models.Product> Products, string ErrorMessage)> IProductsProvider.GetProductsAsync()
+        public async Task<(bool IsSuccess, IEnumerable<Models.Product> Products, string ErrorMessage)> GetProductsAsync()
         {
-            throw new NotImplementedException();
+            try {
+                var products = await dbContext.Products.ToListAsync();
+                if (products != null && products.Any()) {
+                    var result = mapper.Map<IEnumerable<Db.Product>, IEnumerable<Models.Product>>(products);
+                    return (true, result, null);
+                }
+                return (false, null, "Not found");
+            }
+            catch (Exception ex) {
+                logger?.LogError(ex.ToString());
+                return (false, null, ex.Message);
+            }
         }
     }
 }
