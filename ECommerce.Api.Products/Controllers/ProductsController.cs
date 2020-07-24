@@ -25,5 +25,14 @@ namespace ECommerce.Api.Products.Controllers
             }
             return NotFound();
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductAsync(int id) {
+            var result = await productsProvider.GetProductAsync(id);
+            if (result.IsSuccess) {
+                return Ok(result.Product);
+            }
+            return NotFound();
+        }
     }
 }
