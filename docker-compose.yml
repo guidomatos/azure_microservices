@@ -13,13 +13,11 @@ services:
       context: .
       dockerfile: ECommerce.Api.Orders\Dockerfile
 
-
   ecommerce.api.products:
     image: ${DOCKER_REGISTRY-}ecommerceapiproducts
     build:
       context: .
       dockerfile: ECommerce.Api.Products\Dockerfile
-
 
   ecommerce.api.search:
     image: ${DOCKER_REGISTRY-}ecommerceapisearch
